@@ -47,18 +47,54 @@ class Company {
   /** Find all companies.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
+   * 
+   * Optional filters have been outlined to search by name, minEmployees, or
+   * maxEmployees.
    * */
 
-  static async findAll() {
-    const companiesRes = await db.query(
-          `SELECT handle,
+  static async findAll(optionalFilters = {}) {
+    const query = `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
-    return companiesRes.rows;
+           FROM companies`;
+    const whereExps = [];
+    const queryVals = [];
+    
+    const { name, minEmployees, maxEmployees } = optionalFilters;
+
+    // Handles searching by name
+    if (name) {
+      queryVals.push(`%${name}%`);
+      whereExps.push(`name ILIKE $${queryVals.length}`);
+    };
+
+    // Handles searching by minEmployees
+    if(minEmployees !== undefined) {
+      queryVals.push(minEmployees);
+      whereExps.push(`num_employees >= $${queryVals.length}`)
+    };
+
+    // Handles searching by maxEmployees
+    if(maxEmployees !== undefinied) {
+      queryVals.push(maxEmployees);
+      whereExps.push(`num_employess <= $${queryVals.length}`)
+    };
+
+
+    // Handles if minEmployees is greather than maxEmployees
+    if (minEmployees > maxEmployees) {
+      throw new BadRequestError("Min employees can not exceed max employees.")
+    };
+
+    if (whereExps.length > 0) {
+      query += " WHERE " + whereExps.join(" AND ")
+    };
+
+    query += " ORDER BY NAME";
+    const companyRes = await db.query(query, queryVals);
+    return companyRes.rows;
   }
 
   /** Given a company handle, return data about company.

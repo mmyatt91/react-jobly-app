@@ -1,6 +1,11 @@
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
+/**  THIS NEEDS SOME GREAT DOCUMENTATION.
+
+Helper function used to update queries. 
+1st Param: Passes in an object with keys and NEW values
+2nd Param: Returns object and maps keys to names of DB columns
+*/
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);
