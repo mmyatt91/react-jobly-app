@@ -38,7 +38,7 @@ class Job {
    * maxEmployees.
    * */
 
-   static async findAll({ title, minSalary, hasEquity }) {
+   static async findAll({ title, minSalary, hasEquity } = {}) {
        const query = `SELECT j.id,
                              j.title,
                              j.salary,
@@ -46,9 +46,9 @@ class Job {
                              j.company_handle AS companyHandle,
                              c.name AS companyName
                       FROM jobs j 
-                      LEFT JOIN companies AS c ON c.handle = j.company_handle`
-        const whereExps = [];
-        const queryVals = [];
+                        LEFT JOIN companies AS c ON c.handle = j.company_handle`
+        let whereExps = [];
+        let queryVals = [];
 
         const { title, minSalary, hasEquity} = optionalFilters
 
@@ -155,7 +155,7 @@ class Job {
    * Throws NotFoundError if company not found.
    **/
 
-   static async delete (id) {
+   static async remove (id) {
        const result = await db.query(
             `DELETE 
             FROM jobs

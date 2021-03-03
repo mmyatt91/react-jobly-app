@@ -11,7 +11,8 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  adminToken
+  adminToken,
+  testJobIds
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -34,7 +35,7 @@ describe("POST /jobs", function () {
       expect(resp.statusCode).toEqual(201);
       expect(resp.body).toEqual({
         job: {
-            id: expect.any(Number);
+            id: expect.any(Number),
             title: "Entertainer",
             salary: 700,
             equity: "0.7",
@@ -88,7 +89,7 @@ describe("GET /jobs", function () {
               {
                 id: expect.any(Number),
                 title: "Job1",
-                salary: "100",
+                salary: 100,
                 equity: "1",
                 companyHandle: "c1",
                 companyName: "C1"
@@ -96,7 +97,7 @@ describe("GET /jobs", function () {
               {
                 id: expect.any(Number),
                 title: "Job2",
-                salary: "200",
+                salary: 200,
                 equity: "0.5",
                 companyHandle: "c1",
                 companyName: "C1"
@@ -104,8 +105,8 @@ describe("GET /jobs", function () {
               {
                 id: expect.any(Number),
                 title: "Job3",
-                salary: "600",
-                equity: "0",
+                salary: 600,
+                equity: null,
                 companyHandle: "c1",
                 companyName: "C1"
               }],
@@ -115,7 +116,7 @@ describe("GET /jobs", function () {
     test("works: using optional filters", async function () {
       const resp = await request(app)
           .get("/jobs")
-          .query({ title: Job, minSalary: 200, hasEquity: true })
+          .query({ title: "Job2", minSalary: 200, hasEquity: true })
       expect(resp.body).toEqual({
         jobs: [
             {
@@ -225,21 +226,21 @@ describe("GET /jobs", function () {
   describe("DELETE /jobs/:id", function () {
     test("works for admin", async function () {
       const resp = await request(app)
-          .delete(`/jobs/${testJobsIds[0]}`)
+          .delete(`/jobs/${testJobIds[0]}`)
           .set("authorization", `Bearer ${adminToken}`);
       expect(resp.body).toEqual({ deleted: testJobsIds[0] });
     });
   
     test("unauth for non-admin", async function () {
       const resp = await request(app)
-          .delete(`/jobs/${testJobsIds[0]}`)
+          .delete(`/jobs/${testJobIds[0]}`)
           .set("authorization", `Bearer ${u1Token}`);
       expect(resp.statusCode).toEqual(401);
     });
   
     test("unauth for anon", async function () {
       const resp = await request(app)
-          .delete(`/jobs/${testJobsIds[0]}`);
+          .delete(`/jobs/${testJobIds[0]}`);
       expect(resp.statusCode).toEqual(401);
     });
   
@@ -250,4 +251,7 @@ describe("GET /jobs", function () {
       expect(resp.statusCode).toEqual(404);
     });
   });
+});
+
+
   

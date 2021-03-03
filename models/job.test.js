@@ -9,6 +9,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  testJobIds
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -42,24 +43,32 @@ describe("findAll", function() {
     let jobs = await Job.findAll();
     expect(jobs).toEqual([
       {
-        id: testJobsIds[0],
-        title: "Professor",
+        id: testJobIds[0],
+        title: "Job1",
         salary: 100,
         equity: "0.1",
         companyHandle: "c1",
         companyName: "C1"
       },
       {
-        id: testJobsIds[1],
-        title: "Software Engineer",
+        id: testJobIds[1],
+        title: "Job2",
         salary: 200,
+        equity: "0.2",
+        companyHandle: "c1",
+        companyName: "C1"
+      },
+      {
+        id: testJobIds[2],
+        title: "Job3",
+        salary: 300,
         equity: "0",
         companyHandle: "c1",
         companyName: "C1"
       },
       {
-        id: testJobsIds[2],
-        title: "Unemployed",
+        id: testJobIds[3],
+        title: "Job4",
         salary: null,
         equity: null,
         companyHandle: "c1",
@@ -69,13 +78,13 @@ describe("findAll", function() {
   });
 
   test("works by title", async function() {
-    let jobs = await Job.findAll({ title: "Engineer" })
+    let jobs = await Job.findAll({ title: "Job1" })
     expect(jobs).toEqual([
       {
-        id: testJobsIds[1],
-        title: "Software Engineer",
-        salary: 200,
-        equity: "0",
+        id: testJobsIds[0],
+        title: "Job1",
+        salary: 100,
+        equity: "0.1",
         companyHandle: "c1",
         companyName: "C1"
       }
@@ -87,8 +96,16 @@ describe("findAll", function() {
     expect(jobs).toEqual([
       {
         id: testJobsIds[1],
-        title: "Software Engineer",
+        title: "Job2",
         salary: 200,
+        equity: "0.2",
+        companyHandle: "c1",
+        companyName: "C1"
+      },
+      {
+        id: testJobIds[2],
+        title: "Job3",
+        salary: 300,
         equity: "0",
         companyHandle: "c1",
         companyName: "C1"
@@ -100,8 +117,8 @@ describe("findAll", function() {
     let jobs = await Job.findAll({ hasEquity: false })
     expect(jobs).toEqual([
       {
-        id: testJobsIds[2],
-        title: "Unemployed",
+        id: testJobsIds[3],
+        title: "Job4",
         salary: null,
         equity: null,
         companyHandle: "c1",
@@ -115,7 +132,7 @@ describe("findAll", function() {
     expect(jobs).toEqual([
       {
         id: testJobsIds[0],
-        title: "Professor",
+        title: "Job1",
         salary: 100,
         equity: "0.1",
         companyHandle: "c1",
@@ -123,9 +140,9 @@ describe("findAll", function() {
       },
       {
         id: testJobsIds[1],
-        title: "Software Engineer",
+        title: "Job2",
         salary: 200,
-        equity: "0",
+        equity: "0.2",
         companyHandle: "c1",
         companyName: "C1"
       }
@@ -133,14 +150,14 @@ describe("findAll", function() {
   });
 });
 
-/************************************************* */
+/************************************************* get */
 
 describe("get", function() {
   test("works", async function() {
     let job = await Job.get(testJobsIds[0]);
     expect(job).toEqual({
       id: testJobsIds[0],
-      title: "Professor",
+      title: "Job1",
       salary: 100,
       equity: "0.1",
       company: {
@@ -162,7 +179,7 @@ describe("get", function() {
   });
 });
 
-/************************************************* */
+/************************************************* update */
 
 describe("update", function() {
   let updateData = {

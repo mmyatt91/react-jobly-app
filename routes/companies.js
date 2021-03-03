@@ -11,7 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
-const { json } = require("body-parser");
+const companySearchSchema = require("../schemas/companySearch.json");
 
 const router = new express.Router();
 

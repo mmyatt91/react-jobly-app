@@ -59,8 +59,8 @@ class Company {
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
            FROM companies`;
-    const whereExps = [];
-    const queryVals = [];
+    let whereExps = [];
+    let queryVals = [];
     
     const { name, minEmployees, maxEmployees } = optionalFilters;
 
@@ -77,7 +77,7 @@ class Company {
     };
 
     // Handles searching by maxEmployees
-    if(maxEmployees !== undefinied) {
+    if(maxEmployees !== undefined) {
       queryVals.push(maxEmployees);
       whereExps.push(`num_employess <= $${queryVals.length}`)
     };
@@ -92,7 +92,7 @@ class Company {
       query += " WHERE " + whereExps.join(" AND ")
     };
 
-    query += " ORDER BY NAME";
+    query += " ORDER BY name";
     const companyRes = await db.query(query, queryVals);
     return companyRes.rows;
   }
@@ -119,6 +119,16 @@ class Company {
     const company = companyRes.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
+
+    const jobsRes = await db.query(
+          `SELECT id, title, salary, equity
+          FROM jobs
+          WHERE company_handle = $1
+          ORDER BY id`,
+        [handle],
+    );
+
+    company.jobs = jobsRes.rows
 
     return company;
   }

@@ -77,23 +77,6 @@ router.get("/:username", ensureLoggedInUserOrAdmin, async function (req, res, ne
   }
 });
 
-/** POST /[username].jobs/id => { state } => { application }
- *
- * Returns { username, firstName, lastName, isAdmin }
- *
- * Authorization required: Admin & Logged In User
- **/
-
-router.post("/:username/jobs/:id", ensureLoggedInUserOrAdmin, async function (req, res, next) {
-  try {
-    const jobId = +req.params.id;
-    await User.applyToJob(req.params.username, jobId);
-    return res.json({ applied: jobId });
-  } catch (err) {
-    return next(err);
-  }
-});
-
 
 /** PATCH /[username] { user } => { user }
  *
@@ -130,6 +113,24 @@ router.delete("/:username", ensureLoggedInUserOrAdmin, async function (req, res,
   try {
     await User.remove(req.params.username);
     return res.json({ deleted: req.params.username });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+/** POST /[username].jobs/id => { state } => { application }
+ *
+ * Returns { username, firstName, lastName, isAdmin }
+ *
+ * Authorization required: Admin & Logged In User
+ **/
+
+router.post("/:username/jobs/:id", ensureLoggedInUserOrAdmin, async function (req, res, next) {
+  try {
+    const jobId = +req.params.id;
+    await User.applyToJob(req.params.username, jobId);
+    return res.json({ applied: jobId });
   } catch (err) {
     return next(err);
   }
